@@ -1,31 +1,25 @@
-import React from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import '../css/app.css';
+// import './bootstrap';
 
-import Header from './components/Header'
-import Footer from './components/Footer'
-import Home from './pages/Home'
-import Projects from './pages/Projects'
-import ProjectDetail from './pages/ProjectDetail'
-import About from './pages/About'
-import Contact from './pages/Contact'
+import { createInertiaApp } from '@inertiajs/react';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { createRoot } from 'react-dom/client';
 
-function App(){
-  return (
-    <BrowserRouter>
-      <Header />
-      <main className="container mx-auto p-4">
-        <Routes>
-          <Route path="/" element={<Home/>} />
-          <Route path="/projects" element={<Projects/>} />
-          <Route path="/projects/:id" element={<ProjectDetail/>} />
-          <Route path="/about" element={<About/>} />
-          <Route path="/contact" element={<Contact/>} />
-        </Routes>
-      </main>
-      <Footer />
-    </BrowserRouter>
-  )
-}
+const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
-createRoot(document.getElementById('root')).render(<App />)
+createInertiaApp({
+    title: (title) => `${title} - ${appName}`,
+    resolve: (name) =>
+        resolvePageComponent(
+            `./Pages/${name}.jsx`,
+            import.meta.glob('./Pages/**/*.jsx'),
+        ),
+    setup({ el, App, props }) {
+        const root = createRoot(el);
+
+        root.render(<App {...props} />);
+    },
+    progress: {
+        color: '#4B5563',
+    },
+});
